@@ -23,3 +23,45 @@ function init(otu_names) {
             .attr("value", otu_names[i].id)
   }
 }
+
+function optionChanged(value) {
+    if (value != "Select ID") {
+        createBarChart(value);
+    }
+}
+
+function createBarChart(value) {
+    let otu_data = "";
+    let otu_id = [];
+    let otu_label = [];
+    let sample_value = [];
+    console.log("Creating Bar Chart")
+    d3.json(url).then(function(data) {
+        for(let i = 0; i < 10; i++) {
+            if (value == data.samples[i].id) {
+                otu_data = data.samples[i];
+            }
+        }
+        console.log(otu_data);
+        for (let j = 0; j < 10; j++) {
+            otu_id.push(otu_data.otu_ids[j]);
+            otu_label.push(otu_data.otu_labels[j]);
+            sample_value.push(otu_data.sample_values[j]);
+        }
+    });
+    console.log("OTU ID", Object.values(otu_id));
+    console.log("OTU label", otu_label);
+    console.log("OTU Value", sample_value);
+
+    var trace1 = {
+        x: sample_value.map(row => row),
+        y: otu_id.map(row => "OTU" + row),
+        //hoverInfo: otu_label,
+        type: 'bar',
+        orientation: 'h'
+      };
+    
+      var data = [trace1];
+    
+      Plotly.newPlot('bar', data);
+}
